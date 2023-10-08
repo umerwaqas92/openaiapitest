@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenAI API Cost Estimator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    .container {
+     
+      text-align: center;
+      top-margin: 500px;
+    }
+  </style>
+  <script>
+    function updateInputField() {
+      var model = document.getElementById("model").value;
+      var inputFieldLabel = document.getElementById("inputFieldLabel");
+      var inputField = document.getElementById("inputField");
+
+      if (model === "whisper") {
+        inputFieldLabel.innerHTML = "Minutes:";
+        inputField.setAttribute("type", "number");
+        inputField.setAttribute("min", "0");
+        inputField.setAttribute("step", "1");
+      } else if (
+        model === "image_1024" ||
+        model === "image_512" ||
+        model === "image_256"
+      ) {
+        inputFieldLabel.innerHTML = "Number of Images:";
+        inputField.setAttribute("type", "number");
+        inputField.setAttribute("min", "0");
+        inputField.setAttribute("step", "1");
+      } else {
+        inputFieldLabel.innerHTML = "Quantity (Tokens):";
+        inputField.setAttribute("type", "number");
+        inputField.setAttribute("min", "0");
+        inputField.setAttribute("step", "1");
+      }
+
+      updateWordCount(model);
+    }
+
+    function updateWordCount(model) {
+      var wordCountLabel = document.getElementById("wordCount");
+      var tokens = document.getElementById("inputField").value;
+      var approximateWords = Math.floor(tokens / 1000 * 750);
+
+      if (model !== "whisper" && model !== "image_1024" && model !== "image_512" && model !== "image_256") {
+        wordCountLabel.innerHTML = "Approximate Word Count: " + approximateWords;
+      } else {
+        wordCountLabel.innerHTML = "";
+      }
+    }
+
+    function calculateCost() {
+      var model = document.getElementById("model").value;
+      var quantity = document.getElementById("inputField").value;
+      var context;
+      var inputTokenPrice;
+      var outputTokenPrice;
+      var cost;
+
+      switch (model) {
+        case "gpt4_8k":
+          context = "8K";
+          inputTokenPrice = 0.03 / 1000;
+          outputTokenPrice = 0.06 / 1000;
+          break;
+        case "gpt4_32k":
+          context = "32K";
+          inputTokenPrice = 0.06 / 1000;
+          outputTokenPrice = 0.12 / 1000;
+          break;
+        case "gpt3.5_turbo_4k":
+          context = "4K";
+          inputTokenPrice = 0.0015 / 1000;
+          outputTokenPrice = 0.002 / 1000;
+          break;
+        case "gpt3.5_turbo_16k":
+          context = "16K";
+          inputTokenPrice = 0.003 / 1000;
+          outputTokenPrice = 0.004 / 1000;
+          break;
+        case "ada":
+          context = "fine-tuning";
+          inputTokenPrice = 0.0004 / 1000;
+          outputTokenPrice = 0.0016 / 1000;
+          break;
+        case "babbage":
+          context = "fine-tuning";
+          inputTokenPrice = 0.0006 / 1000;
+          outputTokenPrice = 0.0024 / 1000;
+          break;
+        case "curie":
+          context = "fine-tuning";
+          inputTokenPrice = 0.003 / 1000;
+          outputTokenPrice = 0.012 / 1000;
+          break;
+        case "davinci":
+          context = "fine-tuning";
+          inputTokenPrice = 0.03 / 1000;
+          outputTokenPrice = 0.12 / 1000;
+          break;
+        case "ada_v2":
+          context = "embedding";
+          inputTokenPrice = 0.0001 / 1000;
+          outputTokenPrice = 0.0001 / 1000;
+          break;
+        case "image_1024":
+          context = "image";
+          inputTokenPrice = 0.02;
+          outputTokenPrice = 0.02;
+          break;
+        case "image_512":
+          context = "image";
+          inputTokenPrice = 0.018;
+          outputTokenPrice = 0.018;
+          break;
+        case "image_256":
+          context = "image";
+          inputTokenPrice = 0.016;
+          outputTokenPrice = 0.016;
+          break;
+        case "whisper":
+          context = "audio";
+          inputTokenPrice = 0.006;
+          outputTokenPrice = 0.006;
+          break;
+        default:
+          break;
+      }
+
+      if (context === "audio") {
+        cost = inputTokenPrice * quantity;
+      } else if (context === "image") {
+        cost = inputTokenPrice * quantity;
+      } else {
+        cost = (inputTokenPrice + outputTokenPrice) * quantity;
+      }
+
+      document.getElementById("cost").innerHTML = "$" + cost.toFixed(4);
+    }
+  </script>
+  <nav class="navbar navbar-expand-md bg-light navbar-light">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">OpenAI API Tests</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">OpenAI API Tests                </a>
+              </li>
+            <a class="nav-link" href="aboutus.html">About Us</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="cost_calculater.html">API Cost Estimat</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="privacypolicy.html">Privacy Policy</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</head>
+
+<body>
+  
+  <div class="container">
+   <br><br><br><br>
+    <h1>OpenAI API Cost Calculator</h1>
+    <a href="https://www.producthunt.com/posts/openai-api-cost-calculator?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-openai&#0045;api&#0045;cost&#0045;calculator" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=403704&theme=light" alt="OpenAI&#0032;API&#0032;Cost&#0032;Calculator - &#0032;free&#0032;tool&#0032;that&#0032;can&#0032;be&#0032;used&#0032;to&#0032;calculate&#0032;the&#0032;api&#0032;costs | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+    <p class="lead mb-5 text-center">OpenAI API Cost Calculator is free tool that can be used to calculate the openai api costs for any models</p>
+
+    <form>
+      <div class="form-group">
+        <label for="model">Model:</label>
+        <select id="model" class="form-control" onchange="updateInputField()">
+          <option value="gpt4_8k">GPT-4 (8K context)</option>
+          <option value="gpt4_32k">GPT-4 (32K context)</option>
+          <option value="gpt3.5_turbo_4k">GPT-3.5 Turbo (4K context)</option>
+          <option value="gpt3.5_turbo_16k">GPT-3.5 Turbo (16K context)</option>
+          <option value="ada">Ada (fine-tuning)</option>
+          <option value="babbage">Babbage (fine-tuning)</option>
+          <option value="curie">Curie (fine-tuning)</option>
+          <option value="davinci">Davinci (fine-tuning)</option>
+          <option value="ada_v2">Ada v2 (embedding)</option>
+          <option value="image_1024">Image (1024×1024 resolution)</option>
+          <option value="image_512">Image (512×512 resolution)</option>
+          <option value="image_256">Image (256×256 resolution)</option>
+          <option value="whisper">Whisper (audio)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label id="inputFieldLabel" for="inputField">Quantity (Tokens):</label>
+        <input type="number" id="inputField" class="form-control" min="0" step="1" onchange="updateWordCount(model)">
+      </div>
+      <button type="button" class="btn btn-primary" onclick="calculateCost()">Calculate Cost</button>
+    </form>
+    <br>
+    <h2>Estimated Cost:</h2>
+    <p id="cost"></p>
+    <p id="wordCount"></p>
+  
+  </div>
+</body>
+<br><br><br><br>
+<footer class="bg-light">
+  <div class="container py-4">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>OpenAI API Tests</h5>
+        <p class="text-muted">Validate your OpenAI API key using this simple tool. Test your key with the GPT-3 model and check its validity.</p>
+      </div>
+      <div class="col-md-3">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">OpenAI API Tests</a></li>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Contact Us</h5>
+        <ul class="list-unstyled">
+          <li><a href="mailto:hello@quickbotai.com">hello@quickbotai.com</a></li>
+          <li><a href="tel:+1(512)885-6265">++1(512)885-6265</a></li>
+          <li><a href="#">Follow Us on Twitter</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <p class="text-center text-muted">&copy; 2023 OpenAI API Checker. All rights reserved.</p>
+  </div>
+</footer>
+</html>
